@@ -1,0 +1,6 @@
+# Don't think these are actually useful
+windows_hostname: "x"
+mac_hostname: "x"
+
+local_path: "x"
+remote_path: "x"

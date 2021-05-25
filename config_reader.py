@@ -6,7 +6,11 @@ class ConfigReader:
     def __init__(self):
         config_path = 'config.yml'
         self.config = self.read_yml_config(config_path)
-        self.x = self.config.get('x')
+        self.windows_hostname = self.config.get('windows_hostname')
+        self.mac_hostname = self.config.get('mac_hostname')
+
+        self.local_path = self.config.get('local_path')
+        self.remote_path = self.config.get('remote_path')
 
     def read_yml_config(self, filename):
         """
