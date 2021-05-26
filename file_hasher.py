@@ -36,14 +36,20 @@ class FileHasher:
         file_hashes = {}
         counter = 0
         for root, dirs, files in os.walk(os.path.normpath(root_path)):
-            for file in files:
-                counter = counter + 1
-                file_path = os.path.join(root, file)
-                hash = self.get_file_hash(file_path)
-                if counter % 10 == 0:
-                    print(f"Scanned {counter} files, just scanned:\t {file} => {hash}")
-                if hash != 1:
-                    file_hashes[hash] = [file, file_path]
+            print(f"Looking in {root}")
+            if "$" not in os.path.split(root)[-1][0]:
+                for file in files:
+                    counter = counter + 1
+                    file_path = os.path.join(root, file)
+                    hash = self.get_file_hash(file_path)
+                    if counter % 10 == 0:
+                        print(
+                            f"Scanned {counter} files, just scanned:\t {file} => {hash}"
+                        )
+                    if hash != 1:
+                        file_hashes[hash] = [file, file_path]
+            else:
+                print("Skipping folders with a $ at the start")
         print(f"Total scanned: {counter} in {str(root_path)}")
         return file_hashes
 

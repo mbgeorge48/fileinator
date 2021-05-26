@@ -7,7 +7,8 @@ RAW_DIR = "raw_files"
 
 class PictureBackupinator:
     def __init__(self, source_path, destination_path, file):
-        self.create_dir(os.path.join(destination_path, RAW_DIR))
+        if RAW_DIR not in destination_path:
+            self.create_dir(os.path.join(destination_path, RAW_DIR))
         new_path = os.path.split(file[1].replace(source_path, destination_path))[0]
         if RAW_FILE_TYPE not in os.path.splitext(file[0])[-1]:
             self.copy_file(new_path, file)

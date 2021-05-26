@@ -11,6 +11,8 @@ from picture_backup import PictureBackupinator
 class Backupinator:
     def __init__(self, source_path, destination_path, program_function, other_flags):
 
+        self.failed_files = list()
+
         print("=" * 60)
         print("Welcome to the fileintor backup function")
         print(f'You have selected the "{program_function}" path')
@@ -34,18 +36,36 @@ class Backupinator:
                     end=" ",
                     flush=True,
                 )
-                if "pictures" not in other_flags and os.path.split:
-                    self.copy_file(source_path, destination_path, source_files[hash])
-                else:
-                    PictureBackupinator(
-                        source_path, destination_path, source_files[hash]
-                    )
+                try:
+                    if "pictures" not in other_flags and os.path.split:
+                        self.copy_file(
+                            source_path, destination_path, source_files[hash]
+                        )
+                    else:
+                        PictureBackupinator(
+                            source_path, destination_path, source_files[hash]
+                        )
+                except Exception as e:
+                    print(f"Copy failed for {source_files[hash]}\n{e}")
+                    self.failed_files.append(source_files[hash])
+        print("=" * 60)
+        print(f"Found a total of {counter} files to copy")
+        print(f"Failed to copy {len(self.failed_files)} files")
+        if len(self.failed_files) > 0:
+            print("Those files are:", end=" ", flush=True)
+            for file in self.failed_files:
+                print(file, end=" ")
+        print("=" * 60)
 
     def copy_file(self, source_path, destination_path, file):
         new_path = os.path.split(file[1].replace(source_path, destination_path))[0]
         self.create_dir(new_path)
         print(new_path)
-        shutil.copy2(os.path.split(file[1])[0], os.path.join(new_path, file[0]))
+        try:
+            shutil.copy2(os.path.split(file[1])[0], os.path.join(new_path, file[0]))
+        except Exception as e:
+            print(f"Copy failed for {file}\n{e}")
+            self.failed_files.append(file)
 
     def create_dir(self, path):
         if not os.path.exists(path):
@@ -79,7 +99,9 @@ except IndexError:
 
 
 if __name__ == "__main__":
-    print(f'Start time = {datetime.now().strftime("%H:%M:%S")}')
+    time_format = "%H:%M:%S"
+    start_time = datetime.now().strftime(time_format)
+    print(f"Start time = {start_time}")
     try:
         Backupinator(source_path, destination_path, program_function, other_flags)
     except IndexError and NameError:
@@ -87,7 +109,16 @@ if __name__ == "__main__":
         print("\tpython backup_files.py <function[to-host/to-remote]>")
     except IOError:
         print("Ran into issues reading/copying files")
-        print("Check you've got enough disk space or your folder permissions")
+        print(
+            "Check you've got enough disk space/your folder permissions/your folder path"
+        )
     except KeyboardInterrupt:
         print("Goodbye")
-    print(f'Finish time = {datetime.now().strftime("%H:%M:%S")}')
+    finish_time = datetime.now().strftime(time_format)
+    print(f"Finish time = {finish_time}")
+    time_delta = datetime.strptime(finish_time, time_format) - datetime.strptime(
+        start_time, time_format
+    )
+    total_seconds = time_delta.total_seconds()
+    minutes = total_seconds / 60
+    print(f"Time elapsed = {minutes} (minutes)")
